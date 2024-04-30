@@ -47,6 +47,12 @@ const columns_folders = [
   }
 ]
 
+const createToast = () => {
+  toast({
+        description: 'Your message has been sent.'
+      })
+}
+
 const folderName = ref("")
 const createFolder = async () => {
   const response = await useFetch('/api/createFolder', {
@@ -58,10 +64,8 @@ const createFolder = async () => {
   const response_status_code = response.data.value.$metadata.httpStatusCode
   if (response_status_code === 200) {
     console.log('folder created')
-    console.log(toast({
-        description: 'Your message has been sent.',
-      }))
     refreshNuxtData()
+    createToast()
   }
 }
 
@@ -98,9 +102,9 @@ const createFolder = async () => {
           </div>
         </div>
         <DialogFooter>
-          <Toaster />
+          <!-- <Toaster /> -->
           <DialogClose>
-            <Button type="submit" @click="createFolder">
+            <Button @click="createFolder">
               Create
             </Button>
           </DialogClose>
