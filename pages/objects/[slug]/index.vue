@@ -6,7 +6,7 @@
 
   <div class="flex flex-row items-center justify-center gap-10 my-5">
     <DataTable :data="contents.data.arrays" :columns="columns_objects"/>
-    <DataTable :data="contents.data.folders" :columns="columns_folders" @click="rowClicked"/>
+    <DataTable :data="contents.data.folders" :columns="columns_folders" :rowclick="rowClicked"/>
   </div>
 </template>
 
@@ -18,7 +18,8 @@ const { data: contents } = await useFetch(`/api/object/${route.params.slug}`)
 const rowClicked = (row) => {
   const value = row.target
   // Extracting the text content from the element
-  const prefixname = value.textContent.trim();
+  // const prefixname = value.textContent.trim();
+  const prefixname = row.Name
   router.push(`${route.path}/prefix/${prefixname}`)
 }
 

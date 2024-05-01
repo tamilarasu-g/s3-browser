@@ -10,9 +10,10 @@ const { toast } = useToast()
 const props = defineProps(['objects', 'folders', 'currentpath'])
 const name = route.params.name
 const rowClicked = (row) => {
-  const value = row.target
+  // const value = row.target
   // Extracting the text content from the element
-  const prefix = value.textContent.trim();
+  // const prefix = value.textContent.trim();
+  const prefix = row.Name
   const currentRoute = route.path // Construct full path
   // console.log(`current route is ${currentRoute}/${prefix}`);
   // console.log(route.matched)
@@ -61,11 +62,11 @@ const createFolder = async () => {
   })
   folderName.value = ''
   // console.log(typeof(response.data.value.$metadata.httpStatusCode));
+  createToast()
   const response_status_code = response.data.value.$metadata.httpStatusCode
   if (response_status_code === 200) {
     console.log('folder created')
     refreshNuxtData()
-    createToast()
   }
 }
 
@@ -102,8 +103,8 @@ const createFolder = async () => {
           </div>
         </div>
         <DialogFooter>
-          <!-- <Toaster /> -->
           <DialogClose>
+            <Toaster />
             <Button @click="createFolder">
               Create
             </Button>
@@ -120,23 +121,8 @@ const createFolder = async () => {
 
   <div class="flex flex-row items-center justify-center">
     <DataTable :data="props.objects" :columns="columns_objects" />
-    <DataTable class="ml-6" :data="props.folders" :columns="columns_folders" @click="rowClicked">
+    <DataTable class="ml-6" :data="props.folders" :columns="columns_folders" :rowclick="rowClicked">
     </DataTable>
   </div>
-
-  <!-- <Dialog v-model:visible="visible" modal header="Create Folder" :style="{ width: '25rem' }">
-    <span class="p-text-secondary block mb-5">Create a folder under {{ currentpath }}</span>
-    <div class="flex items-center gap-3 mb-3">
-      <label for="folderName" class="font-semibold w-6rem">Folder Name</label>
-      <InputText id="folderName" class="flex-auto" autocomplete="off" v-model="folderName"/>
-    </div>
-    <div class="flex justify-content-end gap-2">
-      <Button type="button" label="Cancel" severity="secondary" @click="visible = false"></Button>
-      <Button type="button" label="Save" @click="createFolder"></Button>
-    </div>
-  </Dialog> -->
-
-
-
 
 </template>

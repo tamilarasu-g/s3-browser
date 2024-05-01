@@ -1,10 +1,3 @@
-<template>
-  <!-- {{ prefixobjects.data.arrays }}
-    this is the prefix page -->
-  <Objectlist :objects="prefixobjects.data.arrays" :folders="prefixobjects.data.folders" :currentpath="result2" />
-
-</template>
-
 <script setup>
 const route = useRoute()
 // console.log(typeof(route.path));
@@ -24,3 +17,10 @@ const { data: prefixobjects } = await useFetch(`/api/prefix/${result2}`)
 // console.log(`objects under prefix ${result2}`)
 // console.log(prefixobjects);
 </script>
+
+<template>
+  <!-- {{ prefixobjects.data.arrays }}
+    this is the prefix page -->
+  <Objectlist :objects="prefixobjects.data.arrays" :folders="prefixobjects.data.folders" :currentpath="result2" />
+
+</template>

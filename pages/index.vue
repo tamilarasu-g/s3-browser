@@ -7,9 +7,11 @@ const { toast } = useToast()
 
 const { data: buckets } = await useFetch('/api/buckets')
 const bucketrowClicked = (row) => {
-  const value = row.target
+  // const value = row.target
+  // console.log(row.Name);
+  const name = row.Name
   // Extracting the text content from the element
-  const name = value.textContent.trim();
+  // const name = value.textContent.trim();
   // console.log(typeof (value));
   router.push({ path: `/objects/${name}` })
   // router.push({name:'object-slug', params: {slug: `${name}`}})
@@ -34,6 +36,7 @@ const columns = [
   </div>
   <Toaster/>
   <Button
+  
     variant="outline" @click="() => {
       console.log(toast({
         description: 'Your message has been sent.',
@@ -44,7 +47,7 @@ const columns = [
   </Button>
 
   <div class="container py-10 mx-auto">
-    <DataTable :columns="columns" :data="buckets" @click="bucketrowClicked" />
+    <DataTable :columns="columns" :data="buckets" :rowclick="bucketrowClicked" />
   </div>
 
 </template>
