@@ -1,6 +1,7 @@
 <script setup>
 import { Icon } from '@iconify/vue'
 import { Home } from 'lucide-vue-next'
+import { RefreshCw } from 'lucide-vue-next'
 const colorMode = useColorMode()
 </script>
 
@@ -10,9 +11,12 @@ const colorMode = useColorMode()
     <slot />
   </div>
 
-  <div class="absolute top-0 left-0">
+  <div class="absolute top-0 gap-5 left-0">
     <Button class="gap-2" @click="$router.push({path: '/'})">
       <Home />Home
+    </Button>
+    <Button class="gap-2" @click="refreshNuxtData()">
+      <RefreshCw />
     </Button>
   </div>
 
