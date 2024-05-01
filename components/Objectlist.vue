@@ -1,9 +1,10 @@
 <script setup>
-import { FolderPlus } from 'lucide-vue-next'
+import { ArrowUpDown, FolderPlus } from 'lucide-vue-next'
 import { FileUp } from 'lucide-vue-next'
 import { useToast } from '@/components/ui/toast/use-toast'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import Button from './ui/button/Button.vue'
 const router = useRouter()
 const route = useRoute()
 const { toast } = useToast()
@@ -29,15 +30,33 @@ const rowClicked = (row) => {
 const columns_objects = [
   {
     accessorKey: 'Name',
-    header: 'Object Name'
+    header: ({ column }) => {
+            return h(Button, {
+                variant: 'ghost',
+                onClick: () => column.toggleSorting(column.getIsSorted() === 'asc'),
+            }, () => ['Object Name', h(ArrowUpDown, { class: 'ml-2 h-4 w-4' })])
+        },
+        cell: ({ row }) => h('div', { class: 'lowercase' }, row.getValue('Name')),
   },
   {
     accessorKey: 'LastModified',
-    header: 'Last Modified'
+    header: ({ column }) => {
+            return h(Button, {
+                variant: 'ghost',
+                onClick: () => column.toggleSorting(column.getIsSorted() === 'asc'),
+            }, () => ['Last Modified', h(ArrowUpDown, { class: 'ml-2 h-4 w-4' })])
+        },
+        cell: ({ row }) => h('div', { class: 'lowercase' }, row.getValue('LastModified')),
   },
   {
     accessorKey: 'Size',
-    header: 'Object Size'
+    header: ({ column }) => {
+            return h(Button, {
+                variant: 'ghost',
+                onClick: () => column.toggleSorting(column.getIsSorted() === 'asc'),
+            }, () => ['Object Size', h(ArrowUpDown, { class: 'ml-2 h-4 w-4' })])
+        },
+        cell: ({ row }) => h('div', { class: 'uppercase' }, row.getValue('Size')),
   }
 ]
 

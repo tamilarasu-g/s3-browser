@@ -1,6 +1,7 @@
 <script setup>
 import { useToast } from '@/components/ui/toast/use-toast'
-
+import { ArrowUpDown, ChevronDown } from 'lucide-vue-next'
+import { Button } from '~/components/ui/button';
 const router = useRouter()
 
 const { toast } = useToast()
@@ -20,11 +21,23 @@ const bucketrowClicked = (row) => {
 const columns = [
   {
     accessorKey: "Name",
-    header: "Bucket Name",
+    header: ({ column }) => {
+            return h(Button, {
+                variant: 'ghost',
+                onClick: () => column.toggleSorting(column.getIsSorted() === 'asc'),
+            }, () => ['Bucket Name', h(ArrowUpDown, { class: 'ml-2 h-4 w-4' })])
+        },
+        cell: ({ row }) => h('div', { class: 'lowercase' }, row.getValue('Name')),
   },
   {
     accessorKey: "CreationDate",
-    header: "Created At"
+    header: ({ column }) => {
+            return h(Button, {
+                variant: 'ghost',
+                onClick: () => column.toggleSorting(column.getIsSorted() === 'asc'),
+            }, () => ['Created At', h(ArrowUpDown, { class: 'ml-2 h-4 w-4' })])
+        },
+        cell: ({ row }) => h('div', { class: 'uppercase' }, row.getValue('CreationDate')),
   }
 ]
 
