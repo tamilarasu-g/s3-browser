@@ -1,4 +1,10 @@
-import { S3Client, ListBucketsCommand, ListObjectsV2Command, PutObjectCommand } from "@aws-sdk/client-s3";
+import {
+  S3Client,
+  ListBucketsCommand,
+  ListObjectsV2Command,
+  PutObjectCommand,
+  GetObjectCommand,
+} from "@aws-sdk/client-s3";
 
 export const s3Client = new S3Client({
   region: "ap-south-1",
@@ -11,8 +17,7 @@ export const s3Client = new S3Client({
 export const listBuckets = async () => {
   try {
     const response = await s3Client.send(new ListBucketsCommand({}));
-    return response.Buckets
-
+    return response.Buckets;
   } catch (error) {
     console.error("Error listing buckets:", error);
   }
@@ -23,7 +28,7 @@ export const listObjectsInBucket = async (bucketName) => {
   try {
     // Send the ListObjectsV2Command to list objects in the bucket
     const response = await s3Client.send(
-      new ListObjectsV2Command({ Bucket: bucketName, Delimiter: '/' })
+      new ListObjectsV2Command({ Bucket: bucketName, Delimiter: "/" })
     );
     // const folders = await response.CommonPrefixes.map(prefix => prefix.Prefix);
     const folders = [];
@@ -34,7 +39,7 @@ export const listObjectsInBucket = async (bucketName) => {
       const folderPath = commonPrefix.Prefix;
 
       // Check if the path ends with a trailing slash (indicating a folder)
-      if (folderPath.endsWith('/')) {
+      if (folderPath.endsWith("/")) {
         // Remove the trailing slash for cleaner display (optional)
         const trimmedPath = folderPath.slice(0, -1);
         const folder = {
@@ -43,13 +48,12 @@ export const listObjectsInBucket = async (bucketName) => {
         folders.push(folder);
       }
     }
-    return { data: { arrays: response.Contents, folders } }
+    return { data: { arrays: response.Contents, folders } };
   } catch (error) {
     // Handle errors
     console.error("Error listing objects:", error);
   }
 };
-
 
 export const listObjectsInPrefix = async (bucketName, prefix) => {
   const params = {
@@ -63,34 +67,35 @@ export const listObjectsInPrefix = async (bucketName, prefix) => {
     const folders = [];
     // console.log(response);
     // Loop through the contents and separate objects and folders
-    response.Contents.forEach(content => {
-      if (content.Key.endsWith('/') && !(content.Key === (`${prefix}/`))) {
+    response.Contents.forEach((content) => {
+      if (content.Key.endsWith("/") && !(content.Key === `${prefix}/`)) {
         // This is a folder
-        const folderName = content.Key.replace((`${prefix}/`), '')
+        const folderName = content.Key.replace(`${prefix}/`, "");
         if (/\/[a-zA-Z]+/.test(folderName) === false) {
           const formatfolder = {
-            Name: folderName.replace('/', "")
+            Name: folderName.replace("/", ""),
           };
           folders.push(formatfolder);
         }
-      } else if (!(content.Key === (`${prefix}/`))) {
+      } else if (!(content.Key === `${prefix}/`)) {
         // This is an object
 
-        const filtobject = content.Key.replace((`${prefix}/`), '');
-        if (!filtobject.includes('/')) {
+        const filtobject = content.Key.replace(`${prefix}/`, "");
+        if (!filtobject.includes("/")) {
           const formatobject = {
             Name: filtobject,
-            LastModified: content.LastModified.toLocaleString('en-IN', { hour12: false }),
-            Size: (`${((content.Size) / 100000).toFixed(2)} MB`)
+            LastModified: content.LastModified.toLocaleString("en-IN", {
+              hour12: false,
+            }),
+            Size: `${(content.Size / 100000).toFixed(2)} MB`,
           };
           objects.push(formatobject);
         }
       }
-
     });
     // console.log('objects before sending are : ')
     // console.log(JSON.stringify(objects))
-    return { data: { arrays: objects, folders } }
+    return { data: { arrays: objects, folders } };
   } catch (error) {
     console.error("Error listing objects:", error);
     throw error; // Re-throw the error for further handling
@@ -109,9 +114,26 @@ export const createFolder = async (bucketName, prefix, folderName) => {
   try {
     // Call the putObject command to create the folder inside the prefix
     const data = await s3Client.send(new PutObjectCommand(params));
-    return data
+    return data;
     // console.log("Folder created inside prefix successfully:", data);
   } catch (err) {
     console.error("Error creating folder inside prefix:", err);
   }
-}
+};
+
+export const getobject = async (bucketName, prefix, objectName) => {
+  const params = {
+    Bucket: bucketName,
+    Key: prefix + objectName,
+  };
+
+  try {
+    // Call the putObject command to create the folder inside the prefix
+    const data = await s3Client.send(new GetObjectCommand(params));
+    return data
+    // console.log(params);
+    // console.log("Folder created inside prefix successfully:", data);
+  } catch (err) {
+    console.error("Error getting the files :", err);
+  }
+};

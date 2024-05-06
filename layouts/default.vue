@@ -45,3 +45,10 @@ const colorMode = useColorMode()
     </DropdownMenu>
   </div>
 </template>
+
+<style scoped>
+toastcolor {
+  background: #FFFFFF;
+  color: black
+}
+</style>

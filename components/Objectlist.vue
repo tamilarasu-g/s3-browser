@@ -1,13 +1,14 @@
 <script setup>
 import { ArrowUpDown, FolderPlus } from 'lucide-vue-next'
 import { FileUp } from 'lucide-vue-next'
-import { useToast } from '@/components/ui/toast/use-toast'
+import Toastify from 'toastify-js'
+import "toastify-js/src/toastify.css"
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import Button from './ui/button/Button.vue'
 const router = useRouter()
 const route = useRoute()
-const { toast } = useToast()
+// const { toast } = useToast()
 const props = defineProps(['objects', 'folders', 'currentpath'])
 const name = route.params.name
 const rowClicked = (row) => {
@@ -26,37 +27,50 @@ const rowClicked = (row) => {
   // console.log(`new path is ${newPath}`)
 }
 
+const objectClicked = async (row) => {
+  // console.log(row.Name)
+  const response = await useFetch('/api/getobject',{
+    method: 'post',
+    body: {
+      bucketName: `${(props.currentpath).split("/")[0]}`,
+      prefix: `${(props.currentpath).substring((props.currentpath).indexOf("/") + 1)}/`,
+      objectName: row.Name
+    }
+  })
+  console.log(response);
+}
+
 // Columns for the Data Table
 const columns_objects = [
   {
     accessorKey: 'Name',
     header: ({ column }) => {
-            return h(Button, {
-                variant: 'ghost',
-                onClick: () => column.toggleSorting(column.getIsSorted() === 'asc'),
-            }, () => ['Object Name', h(ArrowUpDown, { class: 'ml-2 h-4 w-4' })])
-        },
-        cell: ({ row }) => h('div', { class: 'lowercase' }, row.getValue('Name')),
+      return h(Button, {
+        variant: 'ghost',
+        onClick: () => column.toggleSorting(column.getIsSorted() === 'asc'),
+      }, () => ['Object Name', h(ArrowUpDown, { class: 'ml-2 h-4 w-4' })])
+    },
+    cell: ({ row }) => h('div', { class: 'lowercase' }, row.getValue('Name')),
   },
   {
     accessorKey: 'LastModified',
     header: ({ column }) => {
-            return h(Button, {
-                variant: 'ghost',
-                onClick: () => column.toggleSorting(column.getIsSorted() === 'asc'),
-            }, () => ['Last Modified', h(ArrowUpDown, { class: 'ml-2 h-4 w-4' })])
-        },
-        cell: ({ row }) => h('div', { class: 'lowercase' }, row.getValue('LastModified')),
+      return h(Button, {
+        variant: 'ghost',
+        onClick: () => column.toggleSorting(column.getIsSorted() === 'asc'),
+      }, () => ['Last Modified', h(ArrowUpDown, { class: 'ml-2 h-4 w-4' })])
+    },
+    cell: ({ row }) => h('div', { class: 'lowercase' }, row.getValue('LastModified')),
   },
   {
     accessorKey: 'Size',
     header: ({ column }) => {
-            return h(Button, {
-                variant: 'ghost',
-                onClick: () => column.toggleSorting(column.getIsSorted() === 'asc'),
-            }, () => ['Object Size', h(ArrowUpDown, { class: 'ml-2 h-4 w-4' })])
-        },
-        cell: ({ row }) => h('div', { class: 'uppercase' }, row.getValue('Size')),
+      return h(Button, {
+        variant: 'ghost',
+        onClick: () => column.toggleSorting(column.getIsSorted() === 'asc'),
+      }, () => ['Object Size', h(ArrowUpDown, { class: 'ml-2 h-4 w-4' })])
+    },
+    cell: ({ row }) => h('div', { class: 'uppercase' }, row.getValue('Size')),
   }
 ]
 
@@ -68,9 +82,15 @@ const columns_folders = [
 ]
 
 const createToast = () => {
-  toast({
-        description: 'Your message has been sent.'
-      })
+  Toastify({
+    text: 'Folder created successfully',
+    duration: '3000',
+    close: true,
+    stopOnFocus: true,
+    style: {
+      background: "linear-gradient(to right, #000000, #000000)",
+    }
+  }).showToast()
 }
 
 const folderName = ref("")
@@ -81,9 +101,9 @@ const createFolder = async () => {
   })
   folderName.value = ''
   // console.log(typeof(response.data.value.$metadata.httpStatusCode));
-  createToast()
   const response_status_code = response.data.value.$metadata.httpStatusCode
   if (response_status_code === 200) {
+    createToast()
     console.log('folder created')
     refreshNuxtData()
   }
@@ -123,7 +143,7 @@ const createFolder = async () => {
         </div>
         <DialogFooter>
           <DialogClose>
-            <Toaster />
+            <!-- <Toaster /> -->
             <Button @click="createFolder">
               Create
             </Button>
@@ -139,7 +159,7 @@ const createFolder = async () => {
   </div>
 
   <div class="flex flex-row items-center justify-center">
-    <DataTable :data="props.objects" :columns="columns_objects" />
+    <DataTable :data="props.objects" :columns="columns_objects" :rowclick="objectClicked" />
     <DataTable class="ml-6" :data="props.folders" :columns="columns_folders" :rowclick="rowClicked">
     </DataTable>
   </div>
